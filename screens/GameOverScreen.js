@@ -1,33 +1,81 @@
-import React from "react";
-import { View, StyleSheet, Button, Image, Text } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Image,
+  Text,
+  Dimensions,
+  ScrollView,
+} from "react-native";
 import BodyText from "../components/BodyText";
 import MainButton from "../components/MainButton";
 import TittleText from "../components/TitleText";
 import Colors from "../constants/colors";
 
 const GameOverScreen = (props) => {
+  const [availableDeviceWidth, setAvailableDeviceWidth] = useState(
+    Dimensions.get("window").width
+  );
+  const [availableDeviceHeight, setAvailableDeviceHeight] = useState(
+    Dimensions.get("window").height
+  );
+  useEffect(() => {
+    const updateLayout = () => {
+      setAvailableDeviceWidth(Dimensions.get("window").width);
+      setAvailableDeviceHeight(Dimensions.get("window").height);
+    };
+    Dimensions.addEventListener("change", updateLayout);
+    return () => Dimensions.removeEventListener("change", updateLayout);
+  });
+
   return (
-    <View style={styles.screen}>
-      <TittleText>Game is over</TittleText>
-      <View style={styles.imageContainer}>
-        <Image
-          fadeDuration={1000}
-          source={require("../assets/success.png")}
-          //  source={{uri: 'https://blog.monsternotebook.com.tr/wp-content/webp-express/webp-images/doc-root/wp-content/uploads/2018/10/assasins.png.webp'}}
-          style={styles.image}
-          resizeMode="cover"
-        />
+    <ScrollView>
+      <View style={styles.screen}>
+        <TittleText>Game is over</TittleText>
+        <View
+          style={{
+            ...styles.imageContainer,
+            ...{
+              width: availableDeviceHeight * 0.5,
+              height: availableDeviceHeight * 0.5,
+              borderRadius: (availableDeviceHeight * 0.5) / 2,
+              marginVertical: availableDeviceHeight / 30,
+            },
+          }}
+        >
+          <Image
+            fadeDuration={1000}
+            source={require("../assets/success.png")}
+            //  source={{uri: 'https://blog.monsternotebook.com.tr/wp-content/webp-express/webp-images/doc-root/wp-content/uploads/2018/10/assasins.png.webp'}}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        </View>
+        <View
+          style={{
+            ...styles.resultContainer,
+            ...{
+              marginBottom: availableDeviceHeight / 60,
+            },
+          }}
+        >
+          <BodyText
+            style={{
+              ...styles.resultText,
+              ...{
+                fontSize: availableDeviceHeight < 600 ? 14 : 16,
+              },
+            }}
+          >
+            You phone needed{" "}
+            <Text style={styles.highlight}>{props.roundsNumber} </Text>
+            rounds to guess the number
+            <Text style={styles.highlight}> {props.userNumber}</Text>
+          </BodyText>
+        </View>
+        <MainButton onPress={props.onRestart}>NEW GAME</MainButton>
       </View>
-      <View style={styles.resultContainer}>
-        <BodyText style={styles.resultText}>
-          You phone needed{" "}
-          <Text style={styles.highlight}>{props.roundsNumber} </Text>
-          rounds to guess the number
-          <Text style={styles.highlight}> {props.userNumber}</Text>
-        </BodyText>
-      </View>
-      <MainButton onPress={props.onRestart}>NEW GAME</MainButton>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -36,14 +84,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    padding: 10,
   },
   imageContainer: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
     borderColor: "black",
     borderWidth: 3,
-    marginVertical: 30,
     overflow: "hidden",
   },
   image: {
@@ -51,12 +96,10 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   resultContainer: {
-    marginHorizontal: 40,
-    marginBottom: 15,
+    marginHorizontal: 30,
   },
   resultText: {
     textAlign: "center",
-    fontSize: 16
   },
   highlight: {
     color: Colors.primary,

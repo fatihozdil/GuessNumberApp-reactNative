@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { SafeAreaView, StyleSheet, View } from "react-native";
 import { useFonts } from "expo-font";
 import AppLoading from "expo-app-loading";
 
@@ -32,13 +32,7 @@ export default function App() {
     setGuessRounds(numOfRounds);
   };
   let content = <StartGameScreen onStartGame={startGameHandler} />;
-  /* content = (
-    <GameOverScreen
-      roundsNumber={1}
-      userNumber={1}
-      onRestart={configureNewGame}
-    />
-  ); */
+
   if (userNumber && guessRounds === 0) {
     content = (
       <GameScreen userChoice={userNumber} onGameOver={gameOverHandler} />
@@ -53,10 +47,10 @@ export default function App() {
     );
   }
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen}>
       <Header title="Guess a Number" />
       {content}
-    </View>
+    </SafeAreaView>
   );
 }
 
